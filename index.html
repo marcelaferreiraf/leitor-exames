@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Leitor de Exames</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 20px; }
+    input, button { margin-top: 10px; display: block; }
+    pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Upload de Exame PDF</h2>
+  <input type="file" id="pdf" accept="application/pdf" />
+  <button onclick="enviar()">Processar</button>
+  <pre id="resultado">Resultado aparecerá aqui...</pre>
+
+  <script>
+    async function enviar() {
+      const input = document.getElementById('pdf');
+      const formData = new FormData();
+      formData.append('pdf', input.files[0]);
+
+      document.getElementById('resultado').innerText = 'Processando...';
+
+      const res = await fetch('/processar', { method: 'POST', body: formData });
+      const data = await res.json();
+      document.getElementById('resultado').innerText = data.resultado || 'Erro ao processar';
+    }
+  </script>
+</body>
+</html>
