@@ -57,4 +57,7 @@ app.post('/processar', upload.single('pdf'), async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Servidor iniciado na porta', PORT));
+
+app.listen(PORT, () => {
+  console.log(`Servidor iniciado na porta ${PORT}`);
+});
