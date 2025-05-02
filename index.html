@@ -1,32 +1,78 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Leitor de Exames</title>
   <style>
-    body { font-family: sans-serif; max-width: 700px; margin: auto; padding: 20px; }
-    input, button { margin-top: 10px; display: block; }
-    pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ccc;
+      margin: auto;
+    }
+    input[type="file"] {
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    #resultado {
+      margin-top: 30px;
+      background-color: #eef;
+      padding: 15px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 <body>
-  <h2>Upload de Exame PDF</h2>
-  <input type="file" id="pdf" accept="application/pdf" />
-  <button onclick="enviar()">Processar</button>
-  <pre id="resultado">Resultado aparecerá aqui...</pre>
+  <div class="container">
+    <h1>Leitor de Exames Laboratoriais</h1>
+    <form id="formulario" enctype="multipart/form-data">
+      <label for="pdf">Selecione um arquivo PDF:</label><br>
+      <input type="file" name="pdf" id="pdf" accept="application/pdf" required />
+      <br>
+      <button type="submit">Processar Exame</button>
+    </form>
+
+    <div id="resultado"></div>
+  </div>
 
   <script>
-    async function enviar() {
-      const input = document.getElementById('pdf');
+    document.getElementById("formulario").addEventListener("submit", async (e) => {
+      e.preventDefault();
       const formData = new FormData();
-      formData.append('pdf', input.files[0]);
+      const arquivo = document.getElementById("pdf").files[0];
+      formData.append("pdf", arquivo);
 
-      document.getElementById('resultado').innerText = 'Processando...';
+      const resposta = await fetch("/processar", {
+        method: "POST",
+        body: formData
+      });
 
-      const res = await fetch('/processar', { method: 'POST', body: formData });
-      const data = await res.json();
-      document.getElementById('resultado').innerText = data.resultado || 'Erro ao processar';
-    }
+      const dados = await resposta.json();
+      document.getElementById("resultado").textContent = dados.resultado;
+    });
   </script>
 </body>
 </html>
